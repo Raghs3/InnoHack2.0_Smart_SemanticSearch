@@ -45,3 +45,6 @@ test_*.py
 
 # Ignore example env file, but keep it for reference
 !.env.example
+
+# Ignore hackathon guide markdown
+hackathon-guide.md
