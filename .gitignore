@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Environment variables
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node
+node_modules/
+
+# Misc
+*.swp
+*.bak
+*.tmp
+
+# Test and example files
+test_*.py
+*.example
+
+# Ignore example env file, but keep it for reference
+!.env.example

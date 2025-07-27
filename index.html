@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuFind - Smart Document Search Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <h2>DocuFind</h2>
+        <p>Initializing Smart Document Search...</p>
+    </div>
+
+    <!-- Landing Page -->
+    <div id="landing-page" class="page hidden">
+        <nav class="landing-nav">
+            <div class="container">
+                <div class="nav-content">
+                    <div class="logo">
+                        <i class="fas fa-search"></i>
+                        <span>DocuFind</span>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="btn btn--outline" onclick="showAuth('login')">Login</button>
+                        <button class="btn btn--primary" onclick="showAuth('signup')">Get Started</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="landing-main">
+            <div class="container">
+                <div class="hero-section">
+                    <h1>Smart Document Search with Semantic Ranking</h1>
+                    <p class="hero-subtitle">Find exactly what you're looking for with AI-powered semantic search. Upload documents and discover insights with intelligent ranking and real-time analytics.</p>
+                    
+                    <div class="hero-actions">
+                        <button class="btn btn--primary btn--lg" onclick="showAuth('signup')">
+                            <i class="fas fa-rocket"></i>
+                            Start Free Trial
+                        </button>
+                        <button class="btn btn--outline btn--lg" onclick="showDemo()">
+                            <i class="fas fa-play"></i>
+                            View Demo
+                        </button>
+                    </div>
+
+                    <div class="demo-search">
+                        <div class="search-container">
+                            <input type="text" placeholder="Try searching: 'AI applications in medical diagnosis'" class="demo-search-input" id="demo-search">
+                            <button class="search-btn" onclick="performDemoSearch()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="demo-results" class="demo-results hidden"></div>
+                    </div>
+                </div>
+
+                <div class="features-section">
+                    <h2>Powerful Features</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                            <h3>Semantic Search</h3>
+                            <p>AI-powered search understands context and meaning, not just keywords</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                            <h3>Real-time Analytics</h3>
+                            <p>Track search patterns, document engagement, and user behavior</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-upload"></i></div>
+                            <h3>Smart Upload</h3>
+                            <p>Drag-and-drop document upload with automatic content extraction</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                            <h3>Mobile Ready</h3>
+                            <p>Fully responsive design works perfectly on all devices</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-backdrop" onclick="hideAuth()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="auth-title">Sign In</h2>
+                <button class="modal-close" onclick="hideAuth()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="auth-form" class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" required>
+                        <div class="form-error" id="email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-control" required>
+                        <div class="form-error" id="password-error"></div>
+                    </div>
+                    <div id="signup-fields" class="hidden">
+                        <div class="form-group">
+                            <label class="form-label" for="name">Full Name</label>
+                            <input type="text" id="name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="role">Role</label>
+                            <select id="role" class="form-control">
+                                <option value="">Select your role</option>
+                                <option value="researcher">Researcher</option>
+                                <option value="student">Student</option>
+                                <option value="professional">Professional</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">
+                        <span id="auth-btn-text">Sign In</span>
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                
+                <button class="btn btn--outline btn--full-width google-btn" onclick="signInWithGoogle()">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+                
+                <div class="auth-switch">
+                    <p id="auth-switch-text">Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="app hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-search"></i>
+                    <span>DocuFind</span>
+                </div>
+                
+                <div class="header-search">
+                    <div class="search-container">
+                        <input type="text" id="main-search" class="search-input" placeholder="Search your documents...">
+                        <button class="search-btn" onclick="performSearch()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="search-suggestions" class="search-suggestions hidden"></div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn--secondary" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    <div class="user-menu">
+                        <button class="user-avatar" onclick="toggleUserMenu()">
+                            <img id="user-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23626c71'%3E%3Cpath d='M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V14L7 18V20H17V18L13 14V11C14.1 11 15 10.1 15 9Z'/%3E%3C/svg%3E" alt="User Avatar">
+                        </button>
+                        <div id="user-dropdown" class="user-dropdown hidden">
+                            <div class="user-info">
+                                <div class="user-name" id="user-name">Dr. Sarah Mitchell</div>
+                                <div class="user-email" id="user-email">sarah.mitchell@research.edu</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" onclick="showProfile()"><i class="fas fa-user"></i> Profile</a>
+                            <a href="#" onclick="showSettings()"><i class="fas fa-cog"></i> Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="app-nav">
+            <div class="nav-items">
+                <button class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-view="search" onclick="switchView('search')">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </button>
+                <button class="nav-item" data-view="documents" onclick="switchView('documents')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documents</span>
+                </button>
+                <button class="nav-item" data-view="upload" onclick="switchView('upload')">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </button>
+                <button class="nav-item" data-view="analytics" onclick="switchView('analytics')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <div class="view-header">
+                    <h1>Dashboard</h1>
+                    <p>Welcome back! Here's what's happening with your documents.</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="total-docs">47</div>
+                                <div class="stat-label">Total Documents</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-search"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="total-searches">328</div>
+                                <div class="stat-label">Total Searches</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="avg-search-time">2.3s</div>
+                                <div class="stat-label">Avg Search Time</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-upload"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="recent-uploads">12</div>
+                                <div class="stat-label">Recent Uploads</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-content">
+                        <div class="dashboard-section">
+                            <h2>Recent Activity</h2>
+                            <div id="recent-activity" class="activity-list"></div>
+                        </div>
+                        
+                        <div class="dashboard-section">
+                            <h2>Quick Actions</h2>
+                            <div class="quick-actions">
+                                <button class="quick-action-btn" onclick="switchView('upload')">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Upload Documents</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="switchView('search')">
+                                    <i class="fas fa-search"></i>
+                                    <span>Advanced Search</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="switchView('analytics')">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>View Analytics</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search View -->
+            <div id="search-view" class="view">
+                <div class="view-header">
+                    <h1>Advanced Search</h1>
+                    <p>Find documents using our intelligent semantic search engine.</p>
+                </div>
+                
+                <div class="search-filters">
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label class="form-label">Document Type</label>
+                            <select id="type-filter" class="form-control">
+                                <option value="">All Types</option>
+                                <option value="pdf">PDF</option>
+                                <option value="docx">Word Document</option>
+                                <option value="txt">Text File</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Date Range</label>
+                            <select id="date-filter" class="form-control">
+                                <option value="">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Sort By</label>
+                            <select id="sort-filter" class="form-control">
+                                <option value="relevance">Relevance</option>
+                                <option value="date">Upload Date</option>
+                                <option value="title">Title</option>
+                                <option value="author">Author</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="search-results" class="search-results">
+                    <div class="sample-queries">
+                        <h3>Try these sample queries:</h3>
+                        <div class="sample-query-buttons">
+                            <button class="btn btn--outline" onclick="setSampleQuery('AI applications in medical diagnosis')">
+                                AI in Medical Diagnosis
+                            </button>
+                            <button class="btn btn--outline" onclick="setSampleQuery('environmental sustainability practices')">
+                                Environmental Sustainability
+                            </button>
+                            <button class="btn btn--outline" onclick="setSampleQuery('emerging technology trends')">
+                                Technology Trends
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents View -->
+            <div id="documents-view" class="view">
+                <div class="view-header">
+                    <h1>Document Library</h1>
+                    <p>Manage and organize your uploaded documents.</p>
+                </div>
+                
+                <div class="documents-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-container">
+                            <input type="text" id="doc-search" class="search-input" placeholder="Search documents...">
+                            <button class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn--secondary" onclick="toggleViewMode()">
+                            <i class="fas fa-th" id="view-mode-icon"></i>
+                        </button>
+                        <button class="btn btn--primary" onclick="switchView('upload')">
+                            <i class="fas fa-plus"></i>
+                            Add Documents
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="documents-grid" class="documents-grid"></div>
+            </div>
+
+            <!-- Upload View -->
+            <div id="upload-view" class="view">
+                <div class="view-header">
+                    <h1>Upload Documents</h1>
+                    <p>Drag and drop files or click to browse. Supports PDF, DOCX, and TXT files.</p>
+                </div>
+                
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Drop files here or click to browse</h3>
+                        <p>Maximum file size: 10MB per file</p>
+                        <button class="btn btn--primary" onclick="document.getElementById('file-input').click()">
+                            Choose Files
+                        </button>
+                        <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt" style="display: none;">
+                    </div>
+                </div>
+                
+                <div id="upload-progress" class="upload-progress hidden">
+                    <h3>Uploading Files</h3>
+                    <div id="upload-list" class="upload-list"></div>
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analytics-view" class="view">
+                <div class="view-header">
+                    <h1>Analytics Dashboard</h1>
+                    <p>Insights into your document search patterns and usage statistics.</p>
+                </div>
+                
+                <div class="analytics-grid">
+                    <div class="chart-card">
+                        <h3>Search Trends</h3>
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="search-trends-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Top Search Terms</h3>
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="top-terms-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Document Types</h3>
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="doc-types-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Usage Statistics</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Searches This Month</span>
+                                <span class="stat-value">328</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Most Active Day</span>
+                                <span class="stat-value">December 7th</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Average Results per Search</span>
+                                <span class="stat-value">6.2</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Search Success Rate</span>
+                                <span class="stat-value">94%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Onboarding Tour -->
+    <div id="tour-overlay" class="tour-overlay hidden">
+        <div class="tour-step" id="tour-step">
+            <div class="tour-content">
+                <h3 id="tour-title">Welcome to DocuFind!</h3>
+                <p id="tour-description">Let's take a quick tour of your new document search engine.</p>
+                <div class="tour-actions">
+                    <button class="btn btn--outline" onclick="skipTour()">Skip Tour</button>
+                    <button class="btn btn--primary" onclick="nextTourStep()">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
